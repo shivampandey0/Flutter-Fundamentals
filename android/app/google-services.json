@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "736679897182",
+    "project_id": "flutterweb-904ed",
+    "storage_bucket": "flutterweb-904ed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736679897182:android:8fc4c5b9e6d6f717edeccf",
+        "android_client_info": {
+          "package_name": "com.petraapps.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736679897182-7e76c7lcinvgsargkhq5qtosk81lkld1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOHKA5AkqpuXsNrDmgMsPn9NpnQxfioNA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736679897182-7e76c7lcinvgsargkhq5qtosk81lkld1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736679897182-khhavcmhac6r0nroq69qb0vog9u2bq49.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.petraapps.demo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
