@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:time_tracker_flutter_course/app/services/auth.dart';
+import 'package:time_tracker_flutter_course/app/sign_in/email_sign_in_page.dart';
 import 'package:time_tracker_flutter_course/app/sign_in/sign_in_button.dart';
 import 'package:time_tracker_flutter_course/app/sign_in/social_sign_in_button.dart';
 
@@ -13,10 +14,26 @@ class SignInPage extends StatelessWidget {
 
   Future<void> _signInAnonymously() async {
     try {
-       await authBase.signInAnonymously();
+      await authBase.signInAnonymously();
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    try {
+      await authBase.signInWithGoogle();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _signInWithEmail(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (context) => EmailSignInPage(
+              authBase: authBase,
+            )));
   }
 
   @override
@@ -30,12 +47,12 @@ class SignInPage extends StatelessWidget {
           ),
         ),
       ),
-      body: _buildContent(),
+      body: _buildContent(context),
       backgroundColor: Colors.grey[200],
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -56,7 +73,7 @@ class SignInPage extends StatelessWidget {
             text: 'Sign in With Google',
             color: Colors.white,
             textColor: Colors.black87,
-            onPressed: () {},
+            onPressed: _signInWithGoogle,
             image: 'assets/images/google-logo.png',
           ),
           smallSpace(),
@@ -72,7 +89,7 @@ class SignInPage extends StatelessWidget {
             text: 'Sign in With Email',
             textColor: Colors.white,
             color: Colors.teal[700],
-            onPressed: () {},
+            onPressed: () => _signInWithEmail(context),
           ),
           smallSpace(),
           Text(
