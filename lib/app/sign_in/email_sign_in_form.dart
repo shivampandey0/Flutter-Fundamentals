@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:time_tracker_flutter_course/app/common_widgets.dart/form_submit_button.dart';
 import 'package:time_tracker_flutter_course/app/services/auth.dart';
+import 'package:time_tracker_flutter_course/app/sign_in/validators.dart';
 
 enum EmailSignInFormType { signIn, register }
 
-class EmailSignInForm extends StatefulWidget {
+class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
   final AuthBase authBase;
 
-  const EmailSignInForm({
+  EmailSignInForm({
     Key key,
     @required this.authBase,
   }) : super(key: key);
@@ -26,8 +27,14 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   String get _password => _passwordController.text;
 
   EmailSignInFormType _formType = EmailSignInFormType.signIn;
+  bool _submitted = false;
+  bool _isLoading = false;
 
   void _submit() async {
+    setState(() {
+      _submitted = true;
+      _isLoading = true;
+    });
     try {
       if (_formType == EmailSignInFormType.signIn) {
         await widget.authBase.signInWithEmailAndPassword(_email, _password);
@@ -37,14 +44,22 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       Navigator.of(context).pop();
     } catch (e) {
       print(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   void _emailEditingComplete() {
-    FocusScope.of(context).requestFocus(_passwordFocusNode);
+    final newFocus = widget.emailValidator.isValid(_email)
+        ? _passwordFocusNode
+        : _emailFocusNode;
+    FocusScope.of(context).requestFocus(newFocus);
   }
 
   void _toggleFormType() {
+    _submitted = false;
     setState(() {
       _formType = _formType == EmailSignInFormType.signIn
           ? EmailSignInFormType.register
@@ -55,7 +70,9 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   }
 
   List<Widget> _buildChildren() {
-    bool submitEnabled = _email.isNotEmpty && _password.isNotEmpty;
+    bool submitEnabled = widget.emailValidator.isValid(_email) &&
+        widget.passwordValidator.isValid(_password) &&
+        !_isLoading;
 
     final primaryText = _formType == EmailSignInFormType.signIn
         ? 'Sign In'
@@ -70,22 +87,29 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       _buildPasswordTextField(),
       const SizedBox(height: 8),
       FormSubmitButton(
-          text: primaryText, onPressed: submitEnabled ? _submit : null),
+        text: primaryText,
+        onPressed: submitEnabled ? _submit : null,
+      ),
       const SizedBox(height: 8),
       TextButton(
-        onPressed: _toggleFormType,
+        onPressed: !_isLoading ? _toggleFormType : null,
         child: Text(secondaryText),
       )
     ];
   }
 
   TextField _buildPasswordTextField() {
+    bool showErrorText =
+        _submitted && !widget.passwordValidator.isValid(_password);
+
     return TextField(
       focusNode: _passwordFocusNode,
       controller: _passwordController,
       textInputAction: TextInputAction.done,
       decoration: InputDecoration(
         labelText: 'Password',
+        enabled: _isLoading == false,
+        errorText: showErrorText ? widget.invalidPasswordErrorText : null,
       ),
       obscureText: true,
       onChanged: (password) => _updateState(),
@@ -94,6 +118,7 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
   }
 
   TextField _buildEmailTextField() {
+    bool showErrorText = _submitted && !widget.emailValidator.isValid(_email);
     return TextField(
       focusNode: _emailFocusNode,
       controller: _emailController,
@@ -102,7 +127,9 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
         labelText: 'Email',
+        enabled: _isLoading == false,
         hintText: 'test@test.com',
+        errorText: showErrorText ? widget.invalidEmailErrorText : null,
       ),
       onChanged: (email) => _updateState(),
       onEditingComplete: _emailEditingComplete,

@@ -5,25 +5,30 @@ import 'package:time_tracker_flutter_course/app/sign_in/email_sign_in_form.dart'
 class EmailSignInPage extends StatelessWidget {
   final AuthBase authBase;
 
-  const EmailSignInPage({Key key,@required this.authBase,}) : super(key: key);
+  const EmailSignInPage({
+    Key key,
+    @required this.authBase,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Sign in',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
+        elevation: 2,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(child: EmailSignInForm(authBase: authBase,)),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+              child: EmailSignInForm(
+            authBase: authBase,
+          )),
+        ),
       ),
       backgroundColor: Colors.grey[200],
     );
   }
-
-  
 }
